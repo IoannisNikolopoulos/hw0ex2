@@ -2,11 +2,11 @@ name: Docker Scout SCA
 
 on:
   workflow_dispatch:
-    inputs:
-      docker_image:
-        description: 'Docker image to scan'
-        required: true
-        default: 'ancor87/welcome-to-docker'
+  #  inputs:
+  #    docker_image:
+  #      description: 'Docker image to scan'
+  #      required: true
+  #      default: 'ancor87/welcome-to-docker'
 
 jobs:
   scout:
@@ -27,13 +27,13 @@ jobs:
     #      password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Pull the image
-        run: docker pull ${{ github.event.inputs.docker_image }}
+        run: docker pull ancor87/welcome-to-docker
 
       - name: Docker Scout
         uses: docker/scout-action@v1
         with:
           command: cves,recommendations,compare,sbom
-          image: ${{ github.event.inputs.docker_image }}
+          image: ancor87/welcome-to-docker
           exit-code: false
           sarif-file: sca_scout.sarif
           output: sbom_scout.spdx.json
@@ -59,4 +59,3 @@ jobs:
 
       - name: SBOM upload
         uses: advanced-security/spdx-dependency-submission-action@v0.1.1
-        # This may require a Public repo or GH Enterprise
