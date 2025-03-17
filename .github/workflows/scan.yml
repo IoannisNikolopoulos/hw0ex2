@@ -2,11 +2,6 @@ name: Docker Scout SCA
 
 on:
   workflow_dispatch:
-  #  inputs:
-  #    docker_image:
-  #      description: 'Docker image to scan'
-  #      required: true
-  #      default: 'ancor87/welcome-to-docker'
 
 jobs:
   scout:
@@ -20,15 +15,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-    #  - name: Login to Docker Hub
-    #    uses: docker/login-action@v3
-    #    with:
-    #      username: ${{ secrets.DOCKERHUB_USERNAME }}
-    #      password: ${{ secrets.DOCKERHUB_TOKEN }}
+      # 1) Login to Docker Hub with your Docker Hub account
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}  # e.g. "testuser731"
+          password: ${{ secrets.DOCKERHUB_TOKEN }}     # e.g. "dckr_pat_BGtOetE0AH6wDa9..."
 
+      # 2) Pull the public image
       - name: Pull the image
         run: docker pull ancor87/welcome-to-docker
 
+      # 3) Docker Scout scanning
       - name: Docker Scout
         uses: docker/scout-action@v1
         with:
@@ -39,6 +37,7 @@ jobs:
           output: sbom_scout.spdx.json
           format: spdx
 
+      # 4) Upload artifacts (SBOM, SARIF) and submit to GitHub code scanning
       - name: Upload SBOM file as an artifact
         uses: actions/upload-artifact@v4
         with:
